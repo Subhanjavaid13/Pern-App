@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+import productRoute from "./routes/productRoute.js"
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,10 +15,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
 
-app.get("/test",(req,res)=>{
-    console.log(res.getHeaders());
-    res.send("Hello From The backend")
-})
+app.use("/api/products",productRoute);
 
 app.listen(PORT,()=>{
     console.log("App Is Running on port "+ PORT);
