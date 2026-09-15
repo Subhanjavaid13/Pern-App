@@ -16,6 +16,35 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
 
+//apply arcjet rate limiter to all routes
+
+app.use(async (req,res,next) => {
+    try {
+    const decision = await aj.protect(req, { requested: 1 }); // Deduct 1 tokens from the bucket
+    console.log("Arcjet decision", decision);
+
+    if (decision.isDenied()) {
+    if (decision.reason.isRateLimit()) {
+      res.status(429).json({error:"Too many requests"});
+    } else if (decision.reason.isBot()) {
+      res.status(403).json({ error: "No bots allowed" });
+    } else {
+      res.status(403).json({ error: "Forbidden" });
+    }
+    return;
+    }
+    if( decision.results.some((result)=> result.reason.isBot() && result.reason.isSpoofed())){
+        res.status(403).json({error:"Spoofed bot is detected"});
+        return;
+    }
+    next();
+    } catch (error) {
+        console.log("error in arcjet :", error);
+        next(error);
+    }  
+})
+
+
 app.use("/api/products",productRoute);
 
 async function initDB() {
