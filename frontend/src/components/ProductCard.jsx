@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImageOffIcon } from "lucide-react";
+import { ImageOffIcon, SquarePenIcon, Trash2Icon } from "lucide-react";
 
 // Postgres returns DECIMAL as a string, so coerce before formatting.
 const formatPrice = (price) =>
@@ -24,11 +24,32 @@ const ProductCard = ({ product }) => {
         )}
       </figure>
 
-      <div className="card-body gap-1 p-4">
+      <div className="card-body gap-2 p-4">
         <h2 className="line-clamp-2 text-base font-semibold" title={product.name}>
           {product.name}
         </h2>
-        <p className="text-lg font-bold text-primary">{formatPrice(product.price)}</p>
+
+        <div className="card-actions items-center justify-between">
+          <p className="text-lg font-bold text-primary">{formatPrice(product.price)}</p>
+
+          <div className="flex gap-1">
+            {/* TODO: open the edit form once it exists. */}
+            <button
+              className="btn btn-square btn-ghost btn-sm"
+              aria-label={`Edit ${product.name}`}
+            >
+              <SquarePenIcon className="size-4" />
+            </button>
+
+            {/* TODO: delete the product once the store action exists. */}
+            <button
+              className="btn btn-square btn-ghost btn-sm text-error"
+              aria-label={`Delete ${product.name}`}
+            >
+              <Trash2Icon className="size-4" />
+            </button>
+          </div>
+        </div>
       </div>
     </article>
   );
