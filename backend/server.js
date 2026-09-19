@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 import productRoute from "./routes/productRoute.js"
 import { sql } from './config/db.js';
+import { aj } from './lib/arcjet.js';
 
 dotenv.config();
 const app = express();
@@ -21,9 +22,9 @@ app.use(cors());
 app.use(async (req,res,next) => {
     try {
     const decision = await aj.protect(req, { requested: 1 }); // Deduct 1 tokens from the bucket
-    console.log("Arcjet decision", decision);
 
     if (decision.isDenied()) {
+    console.log("Arcjet denied request:", decision.reason);
     if (decision.reason.isRateLimit()) {
       res.status(429).json({error:"Too many requests"});
     } else if (decision.reason.isBot()) {
