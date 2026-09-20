@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AlertCircleIcon, PackageOpenIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
+import toast from "react-hot-toast";
 
 import ProductCard from "../components/ProductCard";
 import { useProductStore } from "../store/useProductStore";
@@ -13,13 +14,21 @@ const HomePage = () => {
     fetchProducts();
   }, [fetchProducts]);
 
+  // A refresh usually returns identical data, so confirm it explicitly.
+  // fetchProducts records its own outcome, so read that back instead of
+  // duplicating the error handling here.
+  const handleRefresh = async () => {
+    await fetchProducts();
+    if (!useProductStore.getState().error) toast.success("Products updated");
+  };
+
   const renderContent = () => {
     if (error) {
       return (
-        <div className="alert alert-error">
-          <AlertCircleIcon className="size-5" />
-          <span>{error}</span>
-          <button onClick={fetchProducts} className="btn btn-ghost btn-sm">
+        <div role="alert" className="alert alert-error">
+          <AlertCircleIcon className="size-5 shrink-0" />
+          <span className="flex-1 font-medium">{error}</span>
+          <button onClick={handleRefresh} className="btn btn-sm">
             Try again
           </button>
         </div>
@@ -64,8 +73,8 @@ const HomePage = () => {
         <h1 className="text-2xl font-bold">Products</h1>
 
         <div className="flex items-center gap-2">
-          <button onClick={fetchProducts} disabled={loading} className="btn btn-ghost btn-sm gap-2">
-            <RefreshCwIcon className={`size-4 ${loading ? "animate-spin" : ""}`} />
+          <button onClick={handleRefresh} disabled={loading} className="btn btn-ghost btn-sm gap-2">
+            <RefreshCwIcon className="size-4" />
             Refresh
           </button>
 

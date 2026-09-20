@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
@@ -16,6 +17,11 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductPage />} />
       </Routes>
+
+      <Toaster
+        position="bottom-right"
+        toastOptions={{ className: "!bg-base-100 !text-base-content !border !border-base-content/10" }}
+      />
     </div>
   );
 }

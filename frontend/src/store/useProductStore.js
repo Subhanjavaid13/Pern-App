@@ -13,7 +13,7 @@ export const useProductStore = create((set, get) => ({
             const res = await axios.get(`${BASE_URL}/api/products`);
             set({ products: res.data.data, error:null });
         }catch(error){
-            if(error.status === 429) set({error: "Too many requests. Please try again later."});
+            if(error.status === 429) set({error: "Too many requests. Please try again later.", products: []});
             else set({error: error.message});
         }finally{
             set({loading:false});
