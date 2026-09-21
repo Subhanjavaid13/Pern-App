@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ImageOffIcon, SquarePenIcon, Trash2Icon } from "lucide-react";
 import { useProductStore } from "../store/useProductStore";
 
@@ -36,13 +37,13 @@ const ProductCard = ({ product }) => {
           <p className="text-lg font-bold text-primary">{formatPrice(product.price)}</p>
 
           <div className="flex gap-1">
-            {/* TODO: open the edit form once it exists. */}
-            <button
+            <Link
+              to={`/product/${product.id}`}
               className="btn btn-square btn-ghost btn-sm"
               aria-label={`Edit ${product.name}`}
             >
               <SquarePenIcon className="size-4" />
-            </button>
+            </Link>
 
             <button
               onClick={() => deleteProduct(product.id)}
