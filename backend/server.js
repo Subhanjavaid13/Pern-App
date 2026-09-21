@@ -24,7 +24,7 @@ app.use(async (req,res,next) => {
     const decision = await aj.protect(req, { requested: 1 }); // Deduct 1 tokens from the bucket
 
     if (decision.isDenied()) {
-    console.log("Arcjet denied request:", decision.reason);
+    // console.log("Arcjet denied request:", decision.reason);
     if (decision.reason.isRateLimit()) {
       res.status(429).json({error:"Too many requests"});
     } else if (decision.reason.isBot()) {
