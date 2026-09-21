@@ -14,15 +14,31 @@ const HomePage = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // A refresh usually returns identical data, so confirm it explicitly.
+  // A refresh usually returns identical data, so confirm the outcome explicitly
+  // either way -- otherwise a failed retry looks like nothing happened.
   // fetchProducts records its own outcome, so read that back instead of
   // duplicating the error handling here.
   const handleRefresh = async () => {
     await fetchProducts();
-    if (!useProductStore.getState().error) toast.success("Products updated");
+    const { error: refreshError } = useProductStore.getState();
+
+    if (refreshError) toast.error(refreshError);
+    else toast.success("Products updated");
   };
 
   const renderContent = () => {
+    // Checked before `error` so a retry visibly resets to skeletons instead of
+    // leaving the previous error on screen.
+    if (loading) {
+      return (
+        <div className="grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+            <div key={index} className="skeleton h-72 w-full rounded-2xl" />
+          ))}
+        </div>
+      );
+    }
+
     if (error) {
       return (
         <div role="alert" className="alert alert-error">
@@ -31,17 +47,6 @@ const HomePage = () => {
           <button onClick={handleRefresh} className="btn btn-sm">
             Try again
           </button>
-        </div>
-      );
-    }
-
-    // Only show skeletons on the first load; a refresh keeps the current list visible.
-    if (loading && products.length === 0) {
-      return (
-        <div className="grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
-            <div key={index} className="skeleton h-72 w-full rounded-2xl" />
-          ))}
         </div>
       );
     }
