@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ImageOffIcon, SquarePenIcon, Trash2Icon } from "lucide-react";
+import { useProductStore } from "../store/useProductStore";
 
 // Postgres returns DECIMAL as a string, so coerce before formatting.
 const formatPrice = (price) =>
@@ -8,6 +9,7 @@ const formatPrice = (price) =>
 const ProductCard = ({ product }) => {
   const [imageFailed, setImageFailed] = useState(false);
 
+  const {deleteProduct} = useProductStore();
   return (
     <article className="card overflow-hidden bg-base-100 shadow-sm transition-shadow hover:shadow-lg">
       <figure className="aspect-square bg-base-200">
@@ -42,7 +44,7 @@ const ProductCard = ({ product }) => {
             </button>
 
             {/* TODO: delete the product once the store action exists. */}
-            <button
+            <button onClick={()=> deleteProduct(product.id)}
               className="btn btn-square btn-ghost btn-sm text-error"
               aria-label={`Delete ${product.name}`}
             >
