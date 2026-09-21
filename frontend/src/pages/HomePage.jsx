@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { AlertCircleIcon, PackageOpenIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
+import AddProductModal from "../components/AddProductModal";
 import ProductCard from "../components/ProductCard";
+import { ADD_PRODUCT_MODAL_ID } from "../constants";
 import { useProductStore } from "../store/useProductStore";
 
 const SKELETON_COUNT = 8;
@@ -83,8 +85,10 @@ const HomePage = () => {
             Refresh
           </button>
 
-          {/* TODO: open the create-product form once it exists. */}
-          <button className="btn btn-primary btn-sm gap-2">
+          <button
+            onClick={() => document.getElementById(ADD_PRODUCT_MODAL_ID).showModal()}
+            className="btn btn-primary btn-sm gap-2"
+          >
             <PlusIcon className="size-4" />
             Add Product
           </button>
@@ -92,6 +96,8 @@ const HomePage = () => {
       </div>
 
       {renderContent()}
+
+      <AddProductModal />
     </main>
   );
 };

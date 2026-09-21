@@ -9,7 +9,8 @@ const formatPrice = (price) =>
 const ProductCard = ({ product }) => {
   const [imageFailed, setImageFailed] = useState(false);
 
-  const {deleteProduct} = useProductStore();
+  const { deleteProduct, deletingId } = useProductStore();
+  const isDeleting = deletingId === product.id;
   return (
     <article className="card overflow-hidden bg-base-100 shadow-sm transition-shadow hover:shadow-lg">
       <figure className="aspect-square bg-base-200">
@@ -43,12 +44,17 @@ const ProductCard = ({ product }) => {
               <SquarePenIcon className="size-4" />
             </button>
 
-            {/* TODO: delete the product once the store action exists. */}
-            <button onClick={()=> deleteProduct(product.id)}
+            <button
+              onClick={() => deleteProduct(product.id)}
+              disabled={isDeleting}
               className="btn btn-square btn-ghost btn-sm text-error"
               aria-label={`Delete ${product.name}`}
             >
-              <Trash2Icon className="size-4" />
+              {isDeleting ? (
+                <span className="loading loading-spinner loading-xs" />
+              ) : (
+                <Trash2Icon className="size-4" />
+              )}
             </button>
           </div>
         </div>

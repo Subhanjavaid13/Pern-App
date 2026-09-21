@@ -2,11 +2,42 @@ import {create} from 'zustand';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+import { ADD_PRODUCT_MODAL_ID } from '../constants';
+
 const BASE_URL = 'http://localhost:3000';
 export const useProductStore = create((set, get) => ({
     products: [],
     loading:false,
     error:null,
+    deletingId:null,
+
+    formData:{
+        name:"",
+        price:"",
+        image:""
+    },
+
+    setFormData: (formData) => set({formData}),
+    resetFormData: () => set({formData:{name:"", price:"", image:""}}),
+
+    addProduct : async (e) => {
+        e.preventDefault();
+        set({ loading: true });
+        try {
+            await axios.post(`${BASE_URL}/api/products`, get().formData);
+            await get().fetchProducts();
+            get().resetFormData();
+            toast.success("Product added successfully");
+            document.getElementById(ADD_PRODUCT_MODAL_ID)?.close();
+        } catch (error) {
+            console.log(error, "error in addProduct");
+            // Prefer the API's own message ("All Fields are required") over
+            // axios' generic "Request failed with status code 400".
+            toast.error(error.response?.data?.message || error.message);
+        }finally {
+            set({ loading: false });
+        }
+    },
 
     fetchProducts: async () => {
         set({ loading: true});
@@ -21,17 +52,19 @@ export const useProductStore = create((set, get) => ({
         }
     },
 
+    // Deleting is a per-card action, so it tracks its own id rather than the
+    // page-level `loading`/`error`, which would blank the whole grid.
     deleteProduct : async (id) =>{
-        set({ loading: true });
+        set({ deletingId: id });
         try {
             await axios.delete(`${BASE_URL}/api/products/${id}`);
-            set((prev)=> ({ products: prev.products.filter((product) => product.id !== id), error:null }));
+            set((prev)=> ({ products: prev.products.filter((product) => product.id !== id) }));
             toast.success("Product deleted successfully");
         } catch (error) {
-            set({ error: error.message });
-            toast.error(error.message);
+            console.log(error, "error in deleteProduct");
+            toast.error(error.response?.data?.message || error.message);
         } finally {
-            set({ loading: false });
+            set({ deletingId: null });
         }
     }
 }))

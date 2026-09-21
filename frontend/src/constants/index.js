@@ -17,3 +17,6 @@ export const THEMES = [
   { name: "Night", value: "night" },
   { name: "Dracula", value: "dracula" },
 ];
+
+// Shared so the store can close the dialog after a successful create.
+export const ADD_PRODUCT_MODAL_ID = "add_product_modal";
